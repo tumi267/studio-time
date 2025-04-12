@@ -40,7 +40,7 @@ function Nav() {
 
   return (
     <motion.nav
-      className="bg-[#b1b1b1] py-4"
+      className="bg-[#b1b1b1] py-4 sticky top-0 z-50"
       style={{ paddingLeft: '5em', paddingRight: '5em' }}
       animate={controls}
       transition={{ ease: 'easeInOut', duration: 0.5 }}
