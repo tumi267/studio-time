@@ -66,19 +66,35 @@ export const bookingConfig = {
   ];
   
   export const teamMembers = [
-    { 
-      id: 1, 
-      name: 'John Doe', 
-      role: 'Producer',
-      rate: 200, // Hourly rate
-      available: ['2025-04-15', '2025-04-16','2025-04-17','2025-04-18','2025-04-19'] // Available dates
+    {
+      id: 1,
+      name: "John Doe",
+      role: "Producer",
+      rate: 200,
+      // No availability restrictions - only check against existing bookings
     },
-    { 
-      id: 2, 
-      name: 'Jane Smith', 
-      role: 'Sound Engineer',
-      rate: 250,
-      available: ['2025-04-15','2025-04-16','2025-04-17','2025-04-18','2025-04-19']
+    {
+      id: 2,
+      name: "Jane Smith",
+      role: "Sound Engineer", 
+      rate: 180,
     },
     // ... more team members
+  ];
+  
+  export const existingBookings = [
+    {
+      id: 101,
+      teamMemberIds: [1], // John Doe is booked
+      date: "2025-04-15",
+      startTime: "10:00",
+      endTime: "12:00"
+    },
+    {
+      id: 102,
+      teamMemberIds: [2], // Jane Smith is booked
+      date: "2025-04-15", 
+      startTime: "14:00",
+      endTime: "16:00"
+    }
   ];

@@ -13,85 +13,44 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
     start: null,
     end: null
   });
+  const [showTimeSlots, setShowTimeSlots] = useState(false);
 
-  // Convert date string to Date object safely
-  const parseDateSafe = (dateStr) => {
-    try {
-      return dateStr ? parseISO(dateStr) : null;
-    } catch {
-      return null;
-    }
-  };
+  // Generate time slots from 8AM to 8PM
+  const timeSlots = Array.from({ length: 13 }, (_, i) => {
+    const hour = i + 8;
+    return `${hour.toString().padStart(2, '0')}:00`;
+  });
 
-  // Safe format function with validation
-  const safeFormat = (date, formatStr) => {
-    if (!date || !(date instanceof Date) || isNaN(date.getTime())) return '';
-    return format(date, formatStr);
-  };
-
-  // Generate time slots based on operating hours
-  const generateTimeSlots = () => {
-    const slots = [];
-    for (let hour = 8; hour <= 20; hour++) {
-      slots.push({
-        time: `${hour.toString().padStart(2, '0')}:00`,
-        available: checkTimeAvailability(hour)
-      });
-    }
-    return slots;
-  };
-
-  // Check time availability
-  const checkTimeAvailability = (hour) => {
-    if (!dateRange.from) return true;
+  // Check if a time slot is available
+  const isTimeAvailable = (time) => {
+    if (!dateRange.from) return false;
     
-    const timeStr = `${hour.toString().padStart(2, '0')}:00`;
-    const datesToCheck = getDatesInRange(dateRange.from, dateRange.to || dateRange.from);
+    const dateStr = format(dateRange.from, 'yyyy-MM-dd');
+    const dateData = availableDates.find(d => d.date === dateStr);
+    if (!dateData) return false;
     
-    return datesToCheck.every(date => {
-      const dateStr = safeFormat(date, 'yyyy-MM-dd');
-      const dateData = availableDates.find(d => d.date === dateStr);
-      if (!dateData) return false;
-      
-      return !dateData.bookedSlots.some(slot => 
-        timeStr >= slot.start && timeStr < slot.end
-      );
-    });
-  };
-
-  // Get all dates in range
-  const getDatesInRange = (start, end) => {
-    const dates = [];
-    let current = new Date(start);
-    const endDate = end ? new Date(end) : new Date(start);
-    
-    while (current <= endDate) {
-      dates.push(new Date(current));
-      current = addDays(current, 1);
-    }
-    
-    return dates;
+    return !dateData.bookedSlots.some(slot => 
+      time >= slot.start && time < slot.end
+    );
   };
 
   // Handle date selection
   const handleDateSelect = (range) => {
-    if (!range) return;
-    
-    // Ensure we have proper Date objects
-    const from = range.from ? new Date(range.from) : null;
-    const to = range.to ? new Date(range.to) : null;
-    
-    setDateRange({ from, to });
+    setDateRange(range);
     setTimeRange({ start: null, end: null });
+    setShowTimeSlots(!!range.from);
   };
 
   // Handle time selection
   const handleTimeSelect = (time) => {
-    if (!timeRange.start) {
+    if (!timeRange.start || (timeRange.start && timeRange.end)) {
+      // Starting new selection
       setTimeRange({ start: time, end: null });
     } else if (time > timeRange.start) {
+      // Completing selection
       setTimeRange(prev => ({ ...prev, end: time }));
     } else {
+      // Reselecting start time
       setTimeRange({ start: time, end: null });
     }
   };
@@ -101,29 +60,24 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
     if (!dateRange.from || !timeRange.start || !timeRange.end) return;
     
     const bookingDetails = {
-      startDate: safeFormat(dateRange.from, 'yyyy-MM-dd'),
-      endDate: dateRange.to 
-        ? safeFormat(dateRange.to, 'yyyy-MM-dd') 
-        : safeFormat(dateRange.from, 'yyyy-MM-dd'),
+      startDate: format(dateRange.from, 'yyyy-MM-dd'),
+      endDate: dateRange.to ? format(dateRange.to, 'yyyy-MM-dd') : null,
       startTime: timeRange.start,
-      endTime: timeRange.end,
-      duration: calculateDuration()
+      endTime: timeRange.end
     };
     
     onBookingSelect(bookingDetails);
   };
 
-  // Calculate duration in hours
-  const calculateDuration = () => {
-    if (!timeRange.start || !timeRange.end) return 0;
-    
-    const [startHour] = timeRange.start.split(':').map(Number);
-    const [endHour] = timeRange.end.split(':').map(Number);
-    const dayCount = dateRange.to 
-      ? (dateRange.to.getDate() - dateRange.from.getDate() + 1)
-      : 1;
-    
-    return (endHour - startHour) * dayCount;
+  // Check if time is selected
+  const isTimeSelected = (time) => {
+    if (!timeRange.start || !timeRange.end) return false;
+    return time >= timeRange.start && time < timeRange.end;
+  };
+
+  // Check if time is start/end boundary
+  const isTimeBoundary = (time) => {
+    return time === timeRange.start || time === timeRange.end;
   };
 
   return (
@@ -146,51 +100,50 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
           />
         </div>
         
-        <div className="w-full md:w-1/2">
-          {dateRange.from && (
-            <div className="space-y-4">
-              <h3 className="font-medium">
-                {dateRange.to 
-                  ? `Select time for ${safeFormat(dateRange.from, 'MMM d')} - ${safeFormat(dateRange.to, 'MMM d')}`
-                  : `Select time for ${safeFormat(dateRange.from, 'MMM d')}`}
-              </h3>
-              
-              <div className="grid grid-cols-3 gap-2">
-                {generateTimeSlots().map((slot, index) => (
-                  <Button
-                    key={index}
-                    variant={
-                      timeRange.start && timeRange.end && 
-                      slot.time >= timeRange.start && 
-                      slot.time < timeRange.end 
-                        ? 'default' 
-                        : slot.available 
-                          ? 'outline' 
-                          : 'ghost'
-                    }
-                    disabled={!slot.available}
-                    onClick={() => handleTimeSelect(slot.time)}
-                  >
-                    {slot.time}
-                  </Button>
-                ))}
-              </div>
-              
-              {timeRange.start && (
-                <div className="mt-4 p-4 border rounded-lg">
-                  <p>
-                    <strong>Selected:</strong> {timeRange.start}
-                    {timeRange.end ? ` - ${timeRange.end}` : ''}
-                  </p>
-                  <p><strong>Duration:</strong> {calculateDuration()} hours</p>
-                  {dateRange.to && (
-                    <p><strong>Days:</strong> {safeFormat(dateRange.from, 'MMM d')} - {safeFormat(dateRange.to, 'MMM d')}</p>
-                  )}
-                </div>
-              )}
+        {showTimeSlots && (
+          <div className="w-full md:w-1/2">
+            <h3 className="font-medium mb-4">
+              Select time for {format(dateRange.from, 'MMM d')}
+              {dateRange.to && ` - ${format(dateRange.to, 'MMM d')}`}
+            </h3>
+            
+            <div className="grid grid-cols-3 gap-2">
+              {timeSlots.map((time, index) => (
+                <Button
+                  key={index}
+                  variant={
+                    isTimeSelected(time) 
+                      ? 'default' 
+                      : isTimeAvailable(time) 
+                        ? 'outline' 
+                        : 'ghost'
+                  }
+                  disabled={!isTimeAvailable(time)}
+                  onClick={() => handleTimeSelect(time)}
+                  className={
+                    isTimeBoundary(time) ? 'ring-2 ring-offset-2 ring-primary' : ''
+                  }
+                >
+                  {time}
+                </Button>
+              ))}
             </div>
-          )}
-        </div>
+            
+            {timeRange.start && (
+              <div className="mt-4 p-4 border rounded-lg">
+                <p>
+                  <strong>Selected:</strong> {timeRange.start}
+                  {timeRange.end ? ` - ${timeRange.end}` : ''}
+                </p>
+                <p><strong>Duration:</strong> 
+                  {timeRange.end 
+                    ? `${parseInt(timeRange.end) - parseInt(timeRange.start)} hours` 
+                    : 'Select end time'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
       
       {timeRange.start && timeRange.end && (
