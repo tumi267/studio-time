@@ -1,8 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { format, addDays, isAfter, parseISO } from 'date-fns';
+import { format, isAfter } from 'date-fns';
 
 export default function CalendarGrid({ availableDates, onBookingSelect }) {
   const [dateRange, setDateRange] = useState({
@@ -21,6 +21,24 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
     return `${hour.toString().padStart(2, '0')}:00`;
   });
 
+  // Handle date range selection
+  const handleDateSelect = (range) => {
+    if (range?.from && range?.to) {
+      setDateRange(range);
+      setShowTimeSlots(true);
+    } else if (range?.from) {
+      // If only start date is selected, keep the range incomplete
+      setDateRange({ from: range.from, to: null });
+      setShowTimeSlots(false);
+    } else {
+      // Clear selection
+      setDateRange({ from: null, to: null });
+      setShowTimeSlots(false);
+    }
+    // Reset time selection when dates change
+    setTimeRange({ start: null, end: null });
+  };
+
   // Check if a time slot is available
   const isTimeAvailable = (time) => {
     if (!dateRange.from) return false;
@@ -34,13 +52,6 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
     );
   };
 
-  // Handle date selection
-  const handleDateSelect = (range) => {
-    setDateRange(range);
-    setTimeRange({ start: null, end: null });
-    setShowTimeSlots(!!range.from);
-  };
-
   // Handle time selection
   const handleTimeSelect = (time) => {
     if (!timeRange.start || (timeRange.start && timeRange.end)) {
@@ -48,7 +59,7 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
       setTimeRange({ start: time, end: null });
     } else if (time > timeRange.start) {
       // Completing selection
-      setTimeRange(prev => ({ ...prev, end: time }));
+      setTimeRange({ start: timeRange.start, end: time });
     } else {
       // Reselecting start time
       setTimeRange({ start: time, end: null });
@@ -57,11 +68,11 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
 
   // Confirm booking selection
   const confirmSelection = () => {
-    if (!dateRange.from || !timeRange.start || !timeRange.end) return;
+    if (!dateRange.from || !dateRange.to || !timeRange.start || !timeRange.end) return;
     
     const bookingDetails = {
       startDate: format(dateRange.from, 'yyyy-MM-dd'),
-      endDate: dateRange.to ? format(dateRange.to, 'yyyy-MM-dd') : null,
+      endDate: format(dateRange.to, 'yyyy-MM-dd'),
       startTime: timeRange.start,
       endTime: timeRange.end
     };
@@ -80,16 +91,20 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
     return time === timeRange.start || time === timeRange.end;
   };
 
+  // Reset all selections
+  const resetSelections = () => {
+    setDateRange({ from: null, to: null });
+    setTimeRange({ start: null, end: null });
+    setShowTimeSlots(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row gap-8">
         <div className="w-full md:w-1/2">
           <Calendar
             mode="range"
-            selected={{
-              from: dateRange.from,
-              to: dateRange.to
-            }}
+            selected={dateRange}
             onSelect={handleDateSelect}
             numberOfMonths={2}
             disabled={(day) => {
@@ -98,6 +113,27 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
               return !dateData?.available;
             }}
           />
+          
+          {dateRange.from && (
+            <div className="mt-4 p-4 border rounded-lg">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-medium">Selected Date Range:</p>
+                  <p>
+                    {format(dateRange.from, 'MMM d, yyyy')}
+                    {dateRange.to ? ` - ${format(dateRange.to, 'MMM d, yyyy')}` : ' (Select end date)'}
+                  </p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={resetSelections}
+                >
+                  Change Dates
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
         
         {showTimeSlots && (
@@ -129,10 +165,10 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
               ))}
             </div>
             
-            {timeRange.start && (
+            {(timeRange.start || timeRange.end) && (
               <div className="mt-4 p-4 border rounded-lg">
                 <p>
-                  <strong>Selected:</strong> {timeRange.start}
+                  <strong>Selected Time:</strong> {timeRange.start}
                   {timeRange.end ? ` - ${timeRange.end}` : ''}
                 </p>
                 <p><strong>Duration:</strong> 
@@ -140,16 +176,31 @@ export default function CalendarGrid({ availableDates, onBookingSelect }) {
                     ? `${parseInt(timeRange.end) - parseInt(timeRange.start)} hours` 
                     : 'Select end time'}
                 </p>
+                <div className="mt-2 flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setTimeRange({ start: null, end: null })}
+                  >
+                    Clear Time
+                  </Button>
+                </div>
               </div>
             )}
           </div>
         )}
       </div>
       
-      {timeRange.start && timeRange.end && (
-        <div className="flex justify-end">
+      {timeRange.start && timeRange.end && dateRange.from && dateRange.to && (
+        <div className="flex justify-between">
+          <Button 
+            variant="outline" 
+            onClick={resetSelections}
+          >
+            Start Over
+          </Button>
           <Button onClick={confirmSelection}>
-            Confirm Time Selection
+            Confirm Booking
           </Button>
         </div>
       )}

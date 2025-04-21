@@ -2,7 +2,6 @@ import AboutHero from '../components/about/AboutHero.js'
 import StudioHistory from '../components/about/StudioHistory.js'
 import TeamSection from '../components/about/TeamSection.js'
 import ValuesSection from '../components/about/ValuesSection.js'
-// import StudioFeatures from '../components/about/StudioFeatures.js'
 import ContactCTA from '../components/about/ContactCTA.js'
 
 export default function AboutPage() {
@@ -13,7 +12,7 @@ export default function AboutPage() {
         <StudioHistory />
         <TeamSection />
         <ValuesSection />
-        {/* <StudioFeatures /> */}
+     
         <ContactCTA />
       </div>
     </div>
