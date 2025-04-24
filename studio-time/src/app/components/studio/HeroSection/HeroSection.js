@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-
+import Link from 'next/link'
 export default function HeroSection() {
   return (
     <div className="relative h-screen">
@@ -27,15 +27,15 @@ export default function HeroSection() {
           className="max-w-3xl text-white"
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            World-Class <span className="text-studio-300">Recording</span> Studio
+            World-Class Recording Studio
           </h1>
           <p className="text-xl md:text-2xl mb-8">
             Professional recording environment with state-of-the-art equipment 
             and acoustically treated spaces for perfect sound.
           </p>
-          <button className="bg-studio-300 hover:bg-studio-400 text-studio-900 font-bold py-3 px-8 rounded-full text-lg transition-colors">
+          <Link href={'/booking'} className="bg-studio-300 hover:bg-studio-400 text-studio-900 font-bold py-3 px-8 rounded-full text-lg transition-colors">
             Book a Session
-          </button>
+          </Link>
         </motion.div>
       </div>
       

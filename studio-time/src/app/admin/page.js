@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import PageEditor from '../components/admin/PageEditor'
-import ImageUploader from '../components/admin/ImageUploader.js'
+
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('content')
@@ -14,7 +14,7 @@ export default function AdminPage() {
     {id: 'studio', name: 'Studio'},
     { id: 'about', name: 'About Studio' },
     { id: 'client', name: 'Client Page' },
-    { id: 'booking', name: 'Booking Page' },
+   
     { id: 'contact', name: 'Contact Page' },
     { id: 'gallery', name: 'Gallery Page' }
   ]
@@ -25,12 +25,13 @@ export default function AdminPage() {
       
       <Tabs defaultValue="content" className="w-full">
         <TabsList className="grid w-full grid-cols-2 max-w-md mb-8">
+        <TabsTrigger value="media" onClick={() => setActiveTab('Booking')}>
+            Manage booking
+          </TabsTrigger>
           <TabsTrigger value="content" onClick={() => setActiveTab('content')}>
             Content Management
           </TabsTrigger>
-          <TabsTrigger value="media" onClick={() => setActiveTab('media')}>
-            Media Upload
-          </TabsTrigger>
+
         </TabsList>
 
         <TabsContent value="content">
@@ -55,10 +56,10 @@ export default function AdminPage() {
         <TabsContent value="media">
           <Card>
             <CardHeader>
-              <CardTitle>Upload Media</CardTitle>
+              <CardTitle>Bookings</CardTitle>
             </CardHeader>
             <CardContent>
-              <ImageUploader />
+              {/* booking content here */}
             </CardContent>
           </Card>
         </TabsContent>

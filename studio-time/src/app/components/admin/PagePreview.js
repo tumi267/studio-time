@@ -5,7 +5,26 @@ import ParallaxSection from './ParallaxSectionAdmin/ParallaxSection'
 import StudioTestimonialsSliderAdmin from './TestimonialSliderAdmin/TestimonialSlider'
 import LangingGalleryAdmin from './LandingGallery/LangingGalleryAdmin'
 import LandgingGalleryLeftAdmin from './LandingGallaeryLeft/LandingGalleryLeftAdmin'
+import HeroSectionAdmin from './HeroSection/HeroSection'
+import StudioFeaturesAdmin from './StudioFeaturesAdmin/StudioFeaturesAdmin'
+import RoomShowcaseAdmin from './RoomShowcaseAdmin/RoomShowcaseAdmin'
+import EquipmentListAdmin from './EquipmentListAdmin/EquipmentListAdmin'
+import AboutHeroAdmin from './AboutHeroAdmin/AboutHeroAdmin'
+import StudioHistoryAdmin from './StudioHistoryAdmin/StudioHistoryAdmin'
+import TeamSectionAdmin from './TeamSectionAdmin/TeamSectionAdmin'
+import ValuesSectionAdmin from './ValuesSectionAdmin/ValuesSectionAdmin'
+import ParallaxBackground from './ParallaxContactAdmin/ParallaxContactAdmin'
+import ContactForm from '../contact/ContactForm'
+import SocialLinksAdmin from './SocialLinksAdmin/SocialLinksAdmin'
+import ContactInfoAdmin from './ContactInfoAdmin/ContactInfoAdmin'
+import MapEmbed from './MapEmbedAdmin/MapEmbedAdmin'
+import ClientsHeroAdmin from './ClientsHeroAdmin/ClientsHeroAdmin'
+import ClientsGridAdmin from './ClientsGridAdmin/ClientsGridAdmin'
+import { useState } from 'react'
+import ClientDetailAdmin from './ClientDetailAdmin/ClientDetailAdmin'
+import GalleryGridAdmin from './GalleryGridAdmin/GalleryGridAdmin'
 function PagePreview({ isedit, pageid, moduleid }) {
+  const [selectedClient, setSelectedClient] = useState(0)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="w-[90%] max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-lg p-6">
@@ -20,7 +39,7 @@ function PagePreview({ isedit, pageid, moduleid }) {
         </div>
 
         {/* page edit here*/}
-
+{/* landing */}
         {pageid=='landing'&&<div>
         <ParallaxSection
         imageUrl='https://plus.unsplash.com/premium_photo-1663956045546-80dd104c018f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjV8fG11c2ljJTIwZXF1aXBtZW50fGVufDB8fDB8fHww'
@@ -44,28 +63,86 @@ function PagePreview({ isedit, pageid, moduleid }) {
       <LandgingGalleryLeftAdmin/>
         </div>
         }
-                {pageid=='booking'&&<div>
-        1
-        </div>
-        }
+
+{/* studio */}
                 {pageid=='studio'&&<div>
-        2
+        <HeroSectionAdmin/>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <StudioFeaturesAdmin />
+        <RoomShowcaseAdmin />
+        <EquipmentListAdmin />
+      </div>
         </div>
         }
+        {/* about */}
                 {pageid=='about'&&<div>
-        3
+                <div className="bg-studio-950 text-studio-100">
+       <AboutHeroAdmin />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+        <StudioHistoryAdmin />
+        <TeamSectionAdmin />
+        <ValuesSectionAdmin />
+       
+      </div>
+      </div>
         </div>
         }
+        {/* client */}
                 {pageid=='client'&&<div>
-        4
+                <div className="bg-studio-900 min-h-screen">
+      <ClientsHeroAdmin />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Clients Grid - Scrollable */}
+          <div className="lg:w-2/3">
+            <ClientsGridAdmin
+              selectedClient={selectedClient}
+              setSelectedClient={setSelectedClient}
+            />
+          </div>
+          
+          {/* Client Details - Fixed */}
+          <div className="lg:w-1/3 lg:sticky lg:top-8 lg:h-[calc(100vh-64px)] lg:overflow-y-auto">
+            <ClientDetailAdmin selectedClient={selectedClient} />
+          </div>
+        </div>
+      </div>
+    </div>
         </div>
         }
                 {pageid=='contact'&&<div>
-        5
+                <div className="relative overflow-hidden">
+      <ParallaxBackground />
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h1 className="text-4xl font-bold text-white mb-12 text-center">Get in Touch</h1>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="space-y-8">
+            <ContactForm />
+            <SocialLinksAdmin />
+          </div>
+          
+          <div className="space-y-8">
+            <ContactInfoAdmin />
+            <MapEmbed />
+          </div>
+        </div>
+      </div>
+    </div>
         </div>
         }
+        {/* gallery */}
                 {pageid=='gallery'&&<div>
-        6
+                <div className="min-h-screen bg-studio-950 py-12">
+      <div className="max-w-7xl mx-auto px-4">
+        <h1 className="text-4xl md:text-6xl font-bold text-center mb-16 text-studio-100">
+          Studio Gallery
+        </h1>
+        <GalleryGridAdmin/>
+      </div>
+    </div>
         </div>
         }
 
