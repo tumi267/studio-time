@@ -4,10 +4,13 @@ import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import PageEditor from '../components/admin/PageEditor'
+import Panel from '../components/admin/Booking/panel/Panel'
+import TeamRoom from '../components/admin/TeamRoom/TeamRoom'
+import { RevenueBookingReport } from '../components/admin/Roports/Reports'
 
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState('content')
+  const [activeTab, setActiveTab] = useState('booking')
 
   const pages = [
     { id: 'landing', name: 'Landing Page' },
@@ -23,16 +26,32 @@ export default function AdminPage() {
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">Studio Time Admin</h1>
       
-      <Tabs defaultValue="content" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-md mb-8">
-        <TabsTrigger value="media" onClick={() => setActiveTab('Booking')}>
+      <Tabs defaultValue="booking" className="w-full">
+        <TabsList className="grid w-full grid-cols-4 mb-8">
+        <TabsTrigger value="booking" onClick={() =>{ setActiveTab('booking')}}>
             Manage booking
           </TabsTrigger>
-          <TabsTrigger value="content" onClick={() => setActiveTab('content')}>
+          <TabsTrigger value="content" onClick={() =>{ setActiveTab('content')}}>
             Content Management
           </TabsTrigger>
-
+          <TabsTrigger value="team/room" onClick={() =>{ setActiveTab('team/room')}}>
+            Team/Room
+          </TabsTrigger>
+          <TabsTrigger value="reports" onClick={() =>{ setActiveTab('reports')}}>
+            Reports
+          </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="booking">
+          <Card>
+            <CardHeader>
+              <CardTitle>Bookings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Panel/>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="content">
           <Card>
@@ -53,13 +72,25 @@ export default function AdminPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="media">
+
+        <TabsContent value="team/room">
           <Card>
             <CardHeader>
-              <CardTitle>Bookings</CardTitle>
+              <CardTitle>Edit Team/Room</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* booking content here */}
+              <TeamRoom/>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="reports">
+          <Card>
+            <CardHeader>
+              <CardTitle>Reports</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RevenueBookingReport/>
             </CardContent>
           </Card>
         </TabsContent>

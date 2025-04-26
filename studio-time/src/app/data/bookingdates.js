@@ -85,10 +85,16 @@ export const bookingConfig = {
   export const existingBookings = [
     {
       id: 101,
-      teamMemberIds: [1], // John Doe is booked
+      teamMemberIds: [1],
       date: "2025-04-15",
       startTime: "10:00",
-      endTime: "12:00"
+      endTime: "12:00",
+      roomId: 1,
+      client: {
+        name: "Alice Johnson",
+        email: "alice@example.com",
+        phone: "+27 71 123 4567"
+      }
     },
     {
       id: 102,
