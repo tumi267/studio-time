@@ -10,7 +10,7 @@ export default function StudioHistory() {
               who wanted to create a space that balanced technical excellence with creative freedom.
             </p>
             <p>
-              Over the past decade, we've grown from a small project studio to a world-class facility,
+              Over the past decade, we&apos;ve grown from a small project studio to a world-class facility,
               working with Grammy-winning artists and major labels while maintaining our indie spirit.
             </p>
             <p>

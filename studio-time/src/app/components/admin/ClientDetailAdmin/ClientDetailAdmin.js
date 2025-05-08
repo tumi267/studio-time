@@ -275,7 +275,7 @@ export default function ClientDetailAdmin({ selectedClient, onUpdateClient }) {
             </div>
           ) : (
             <div className="flex items-start gap-2">
-              <p className="italic flex-1">"{clientData?.quote}"</p>
+              <p className="italic flex-1">{clientData?.quote}</p>
               <Button
                 variant="ghost"
                 size="sm"

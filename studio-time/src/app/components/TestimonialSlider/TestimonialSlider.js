@@ -96,7 +96,7 @@ const StudioTestimonialsSlider = () => {
                   </div>
                 </div>
                 <CardContent className="p-0">
-                  <p className="italic">"{testimonial.text}"</p>
+                  <p className="italic">{testimonial.text}</p>
                 </CardContent>
               </Card>
             </motion.div>

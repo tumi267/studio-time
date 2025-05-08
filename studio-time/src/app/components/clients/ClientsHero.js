@@ -21,7 +21,7 @@ export default function ClientsHero() {
         >
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Our Clients</h1>
           <p className="text-xl md:text-2xl max-w-2xl mx-auto">
-            We've had the privilege of working with some of the best in the industry
+            We&apos;ve had the privilege of working with some of the best in the industry
           </p>
         </motion.div>
       </div>
